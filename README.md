@@ -9,6 +9,24 @@ Allows you to connect Joomla 4.x, 5.x, and 6.x sites to [Akeeba Panopticon](http
 * (Optional) Akeeba Backup Professional 9.x or 10.x — to enable backup features
 * (Optional) Admin Tools Professional 7.x — to enable security features
 
+## Build instructions
+
+Check out this repository and Akeeba Build Tools — Public Packager using the following directory names:
+
+- `panopticon-connector` This repository.
+- `buildfiles` [Akeeba Build Tools — Public Packager](https://github.com/akeeba/buildfiles-public)
+- `build.properties` A file created as per the instructions in `buildfiles/README.md`
+
+Then:
+
+```bash
+cd panopticon-connector
+composer install
+phing git
+```
+
+The generated package is under `panopticon-connector/release`.
+
 ## Configuration
 
 ### Allow Remote Extension Installation
