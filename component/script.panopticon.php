@@ -27,6 +27,25 @@ class Pkg_panopticonInstallerScript extends InstallerScript
 
 	protected $minimumJoomla = '4.0.0';
 
+	/**
+	 * The first PHP version we do NOT support.
+	 *
+	 * This is deliberately one minor version above the highest version we support, so that we never have to guess how
+	 * high the patch level of a version which is not out yet will climb. Rejection is therefore `ge`, not `gt`.
+	 *
+	 * @var   string
+	 * @since 1.2.0
+	 */
+	protected $maximumPhp = '8.7';
+
+	/**
+	 * The first Joomla! version we do NOT support. See the note on $maximumPhp.
+	 *
+	 * @var   string
+	 * @since 1.2.0
+	 */
+	protected $maximumJoomla = '6.3';
+
 	public function preflight($type, $parent)
 	{
 		if (!parent::preflight($type, $parent))
@@ -34,7 +53,58 @@ class Pkg_panopticonInstallerScript extends InstallerScript
 			return false;
 		}
 
+		if (!$this->checkMaximumVersions())
+		{
+			return false;
+		}
+
 		$this->setDboFromAdapter($parent);
+
+		return true;
+	}
+
+	/**
+	 * Refuse installation on a PHP or Joomla! version newer than the ones this release was tested against.
+	 *
+	 * Joomla!'s InstallerScript only enforces the minimum versions. Without this check the package would install on
+	 * anything, however new, and fail in ways which look like our bug rather than an unsupported environment.
+	 *
+	 * @return  bool  True if both versions are within range.
+	 * @since   1.2.0
+	 */
+	private function checkMaximumVersions(): bool
+	{
+		$app = Factory::getApplication();
+
+		if (!empty($this->maximumPhp) && version_compare(PHP_VERSION, $this->maximumPhp, 'ge'))
+		{
+			$app->enqueueMessage(
+				sprintf(
+					'Akeeba Panopticon Connector cannot be installed. It supports PHP versions up to, but not '
+					. 'including, PHP %s. This site is running PHP %s.',
+					$this->maximumPhp,
+					PHP_VERSION
+				),
+				'error'
+			);
+
+			return false;
+		}
+
+		if (!empty($this->maximumJoomla) && version_compare(JVERSION, $this->maximumJoomla, 'ge'))
+		{
+			$app->enqueueMessage(
+				sprintf(
+					'Akeeba Panopticon Connector cannot be installed. It supports Joomla! versions up to, but not '
+					. 'including, Joomla! %s. This site is running Joomla! %s.',
+					$this->maximumJoomla,
+					JVERSION
+				),
+				'error'
+			);
+
+			return false;
+		}
 
 		return true;
 	}

@@ -13,7 +13,7 @@
 		}
 	],
 	"require": {
-		"php": "^7.2.5|^8.0",
+		"php": ">=7.2.5 <8.7",
 		"ext-curl": "*",
 		"ext-mbstring": "*",
 		"ext-json": "*",
@@ -25,10 +25,42 @@
 		"ext-pdo": "*",
 		"ext-zend-opcache": "*"
 	},
+	"extra": {
+		"akcompat": {
+			"limit_type": "joomla",
+			"limit": ">=4.0.0 <6.3",
+			"locations": [
+				{
+					"file": "component/script.panopticon.php",
+					"type": "variable",
+					"marker": "$minimumPhp",
+					"value": "PHP_MIN"
+				},
+				{
+					"file": "component/script.panopticon.php",
+					"type": "variable",
+					"marker": "$maximumPhp",
+					"value": "PHP_MAX"
+				},
+				{
+					"file": "component/script.panopticon.php",
+					"type": "variable",
+					"marker": "$minimumJoomla",
+					"value": "LIMIT_MIN"
+				},
+				{
+					"file": "component/script.panopticon.php",
+					"type": "variable",
+					"marker": "$maximumJoomla",
+					"value": "LIMIT_MAX"
+				}
+			]
+		}
+	},
 	"config": {
 		"vendor-dir": "component/backend/vendor",
 		"platform": {
-			"php": "7.2.5"
+			"php": "7.2.999"
 		}
 	}
 }

@@ -31,7 +31,7 @@ class SmokeTest extends AbstractApiTestCase
 
 		$this->assertIsArray($panopticon);
 		$this->assertArrayHasKey('api', $panopticon);
-		$this->assertSame(101, $panopticon['api'], 'Unexpected AKEEBA_PANOPTICON_API level: ' . $response['raw']);
+		$this->assertSame(102, $panopticon['api'], 'Unexpected AKEEBA_PANOPTICON_API level: ' . $response['raw']);
 		$this->assertArrayHasKey('version', $panopticon);
 		$this->assertArrayHasKey('date', $panopticon);
 	}
