@@ -1,4 +1,4 @@
-# Akeeba Panopticon Connector for Joomla 4.x and 5.x version 1.1.1
+# Akeeba Panopticon Connector for Joomla 4.x and 5.x version 1.2.0
 
 * ✨ Add machine translations for `de-DE`, `el-GR`, `es-ES`, `fr-FR`, `it-IT`, and `pt-PT`
 * ✨ Support a custom base URL for the Core File Integrity checksums source
@@ -7,6 +7,8 @@
 * 🐞 System information never reported Linux CPU usage from `/proc/stat`
 * 🐞 Editing an update site through the API failed with HTTP 500
 * 🐞 Remote extension installation from a URL failed with HTTP 500 on PHP 8+ (non-static call to `HttpFactory::getHttp()`) [#27]
+* 🐞 Enabling the “Web Services - Akeeba Backup” plugin wrote to the wrong column
+* 🐞 Akeeba Backup Secret Word provision failure made the whole Akeeba Backup information request fail
 
 # Akeeba Panopticon Connector for Joomla 4.x and 5.x version 1.1.0
 

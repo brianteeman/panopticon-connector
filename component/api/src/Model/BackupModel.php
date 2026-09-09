@@ -361,8 +361,23 @@ class BackupModel extends BaseModel
 		$ret->installed = true;
 		$ret->version   = $this->getComponentVersion($component);
 		$ret->api       = $this->getMaxApiVersion($component);
-		$ret->secret    = $this->getSecret($component);
 		$ret->endpoints = $this->getEndpoints($component);
+
+		/**
+		 * Switching the JSON API on is what makes the API level we just reported mean anything, so it happens
+		 * regardless of whether we manage to report a Secret Word further down. On the v3 API it is the Web Services
+		 * plugin which publishes the routes; the “Enable JSON API” option only gates Secret Word authentication.
+		 */
+		try
+		{
+			$this->ensureFrontendApiEnabled($component);
+		}
+		catch (Throwable $e)
+		{
+			// Nothing we can do about it here. Panopticon will find out when it tries to connect.
+		}
+
+		$ret->secret = $this->getSecret($component);
 
 		return $ret;
 	}
@@ -405,11 +420,36 @@ class BackupModel extends BaseModel
 		];
 	}
 
+	/**
+	 * Get the Akeeba Backup Secret Word, provisioning one if the site does not have it.
+	 *
+	 * The Secret Word is deprecated — Akeeba Backup 11.0 removes it in October 2027 — but we cannot stop reporting
+	 * or provisioning it:
+	 *
+	 * - Akeeba Backup for WordPress and Akeeba Solo have no other credential at all. There is no v3 API outside
+	 *   Joomla!, and the v1 and v2 APIs understand nothing but the Secret Word.
+	 * - Joomla! sites running Akeeba Backup older than 10.4.0 are in the same position in practice. Authenticating
+	 *   the v3 API with a Joomla! API token was too buggy to rely on before that version.
+	 *
+	 * Failure, on the other hand, is not fatal. Reading an encrypted Secret Word means booting the Akeeba Engine,
+	 * and writing a new one means saving the component's parameters; either can fail on a site we are otherwise
+	 * perfectly able to talk to. Panopticon can still authenticate with a Joomla! API token, so we report the
+	 * absence of a Secret Word and let the connection attempt be the thing which decides whether that was fatal.
+	 *
+	 * @param   string  $component  The Akeeba Backup component element, e.g. com_akeebabackup
+	 *
+	 * @return  string|null  NULL when the site has no Secret Word and we could not provision one.
+	 */
 	private function getSecret(string $component): ?string
 	{
-		$this->ensureFrontendApiEnabled($component);
-
-		return $this->getDecodedSecret($component) ?: $this->createSecret($component);
+		try
+		{
+			return $this->getDecodedSecret($component) ?: $this->createSecret($component);
+		}
+		catch (Throwable $e)
+		{
+			return null;
+		}
 	}
 
 	private function getComponentElement(): ?string
@@ -667,7 +707,7 @@ class BackupModel extends BaseModel
 		$db    = Factory::getContainer()->get('DatabaseDriver');
 		$query = $db->getQuery(true)
 			->update($db->quoteName('#__extensions'))
-			->set($db->quoteName('element') . ' = 1')
+			->set($db->quoteName('enabled') . ' = 1')
 			->where(
 				[
 					// type = 'plugin' and folder = 'webservices' and element = 'akeebabackup'
