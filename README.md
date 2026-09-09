@@ -2,6 +2,9 @@
 
 Allows you to connect Joomla 4.x, 5.x, and 6.x sites to [Akeeba Panopticon](https://github.com/akeeba/panopticon).
 
+> [!IMPORTANT]
+> Developing and maintaining world-class software is neither easy nor free. The development of this software is subsidised by sales of our commercial offerings. If you like this software and would like to see it maintained in the future, please consider [purchasing a subscription](https://www.akeeba.com/subscribe.html) to one of our commercial offerings. _Thank you!_
+
 ## Requirements
 
 * Joomla 4.x, 5.x, 6.x
